@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: package-lock.json
+          cache-dependency-path: front/package-lock.json
 
       - name: Install dependencies
         run: npm install
@@ -51,7 +51,7 @@ jobs:
         if: always()
         with:
           name: Frontend Tests
-          path: coverage/junit/test-results.xml
+          path: front/coverage/junit/test-results.xml
           reporter: java-junit
 
       - name: Upload coverage report
@@ -59,4 +59,4 @@ jobs:
         if: always()
         with:
           name: frontend-coverage-${{ github.run_number }}  # historisation des runs
-          path: coverage/
+          path: front/coverage/
