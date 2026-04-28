@@ -1,0 +1,62 @@
+name: Tests front-end
+
+on:
+  pull_request:
+    branches:
+      - main       # déclenche l'action lorsqu’une pull request cible la branche main
+    types: [opened, synchronize, reopened] # limiter aux ouvertures, synchronisations, et réouvertures de pull request
+    paths:
+      - front/**    # déclencher l'action uniquement si le frontend est modifié
+      - .github/workflows/tests-frontend.yml # déclencher l'action si ce fichier est modifié
+  push:
+    branches:
+      - main       # déclenche l'action avant push sur la branche main
+    paths:
+      - front/**    # déclencher l'action uniquement si le frontend est modifié
+      - .github/workflows/tests-frontend.yml # déclencher l'action si ce fichier est modifié
+
+jobs:
+  frontend-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # répertoire de travail par défaut pour tout le fichier
+    defaults:
+      run:
+        working-directory: ./front
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests with coverage
+        # --watch=false : ne pas surveiller les modifications de fichiers
+        # --no-progress : ne pas afficher la barre de progression
+        # --code-coverage : activer la collecte des données de couverture
+        # --browsers=ChromeHeadless : exécuter les tests dans un navigateur headless
+        run: npm run test -- --watch=false --no-progress --code-coverage --browsers=ChromeHeadless
+        continue-on-error: true  # continuer même si certains tests échouent
+
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Frontend Tests
+          path: coverage/junit/test-results.xml
+          reporter: java-junit
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: frontend-coverage-${{ github.run_number }}  # historisation des runs
+          path: coverage/
