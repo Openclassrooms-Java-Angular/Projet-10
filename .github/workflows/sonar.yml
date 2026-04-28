@@ -1,0 +1,51 @@
+name: Sonar Quality Check
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  sonar:
+    name: SonarCloud Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # ---- BACK ----
+      - name: Set up Java 11
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+      - name: Build & test backend
+        working-directory: back
+        run: mvn clean verify
+
+      # ---- FRONT ----
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 18
+
+      - name: Install front dependencies
+        working-directory: front
+        run: npm install
+
+      - name: Run front tests with coverage
+        working-directory: front
+        run: npm run test -- --watch=false --code-coverage
+
+      # ---- SONAR ----
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=Projet-10
+            -Dsonar.organization=openclassrooms-java-angular
