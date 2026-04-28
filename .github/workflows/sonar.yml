@@ -36,6 +36,9 @@ jobs:
         working-directory: front
         run: npm install
 
+      - name: Install Chrome dependencies
+        run: sudo apt-get install -y libgbm-dev
+
       - name: Run front tests with coverage
         working-directory: front
         run: npm run test -- --watch=false --code-coverage
