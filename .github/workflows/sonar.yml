@@ -1,10 +1,10 @@
-name: Sonar Quality Check
+name: sonar
 
 on:
-  pull_request:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["tests-backend", "tests-frontend"]
+    types:
+      - completed
 
 jobs:
   sonar:
