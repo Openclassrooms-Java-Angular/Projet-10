@@ -47,7 +47,7 @@ jobs:
         continue-on-error: true  # continuer même si certains tests échouent
 
       - name: Publish Test Results
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         if: always()
         with:
           name: Frontend Tests
