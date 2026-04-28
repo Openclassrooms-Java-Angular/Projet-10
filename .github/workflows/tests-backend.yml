@@ -1,0 +1,54 @@
+name: Tests back-end
+
+on:
+  pull_request:
+    branches:
+      - main       # déclenche l'action lorsqu’une pull request cible la branche main
+    types: [opened, synchronize, reopened] # limiter aux ouvertures, synchronisations, et réouvertures de pull request
+    paths:
+      - back/**    # déclencher l'action uniquement si le backend est modifié
+      - .github/workflows/tests-backend.yml # déclencher l'action si ce fichier est modifié
+  push:
+    branches:
+      - main       # déclenche l'action avant push sur la branche main
+    paths:
+      - back/**    # déclencher l'action uniquement si le backend est modifié
+      - .github/workflows/tests-backend.yml # déclencher l'action si ce fichier est modifié
+
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # répertoire de travail par défaut pour tout le fichier
+    defaults:
+      run:
+        working-directory: ./back
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Java 11
+        uses: actions/setup-java@v5
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: 'maven'  # mise en cache automatique des dépendances
+
+      - name: Build & run tests
+        run: mvn clean verify
+
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v3
+        if: always()
+        with:
+          name: Backend Tests
+          path: target/surefire-reports/*.xml
+          reporter: java-junit
+
+      - name: Upload JaCoCo report
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: backend-coverage-${{ github.run_number }}  # historisation des runs
+          path: target/site/jacoco
