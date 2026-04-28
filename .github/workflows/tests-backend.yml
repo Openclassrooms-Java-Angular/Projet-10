@@ -43,7 +43,7 @@ jobs:
         if: always()
         with:
           name: Backend Tests
-          path: target/surefire-reports/*.xml
+          path: back/target/surefire-reports/*.xml
           reporter: java-junit
 
       - name: Upload JaCoCo report
@@ -51,4 +51,4 @@ jobs:
         if: always()
         with:
           name: backend-coverage-${{ github.run_number }}  # historisation des runs
-          path: target/site/jacoco
+          path: back/target/site/jacoco
