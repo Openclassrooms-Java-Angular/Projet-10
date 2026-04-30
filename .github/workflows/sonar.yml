@@ -16,17 +16,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      # ---- BACK ----
-      - name: Set up Java 11
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'temurin'
-          java-version: '11'
-
-      - name: Build & test backend
-        working-directory: back
-        run: mvn clean verify
-
       # ---- FRONT ----
       - name: Set up Node
         uses: actions/setup-node@v6
@@ -38,18 +27,22 @@ jobs:
         run: npm install
 
       - name: Install Chrome dependencies
-        run: sudo apt-get install -y libgbm-dev
+        run: sudo apt-get update && sudo apt-get install -y libgbm-dev
 
       - name: Run front tests with coverage
         working-directory: front
-        run: npm run test -- --watch=false --code-coverage
+        run: npm run test -- --watch=false --browsers=ChromeHeadlessCI --code-coverage
+
+      - name: Verify coverage file exists
+        run: |
+          test -f front/coverage/lcov.info
+          grep -q "SF:" front/coverage/lcov.info
 
       # ---- SONAR ----
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v6
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=Projet-10
-            -Dsonar.organization=openclassrooms-java-angular
+      - name: Sonar analysis (Maven)
+        working-directory: back
+        run: mvn -B clean verify sonar:sonar \
+          -Dsonar.projectKey=projet-10 \
+          -Dsonar.organization=openclassrooms-java-angular \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
