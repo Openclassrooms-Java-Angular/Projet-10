@@ -24,16 +24,16 @@ jobs:
       # =========================
       # BACKEND IMAGE
       # =========================
-      - name: Build backend image
-        run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest ./back
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest \
-                     ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:${{ github.sha }}
-
-      - name: Push backend image
-        run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:${{ github.sha }}
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./back
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/bobapp-back:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # =========================
       # FRONTEND IMAGE
