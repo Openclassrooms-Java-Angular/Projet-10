@@ -24,7 +24,7 @@ jobs:
 
       - name: Install front dependencies
         working-directory: front
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Install Chrome dependencies
         run: sudo apt-get update && sudo apt-get install -y libgbm-dev
@@ -40,7 +40,6 @@ jobs:
 
       # ---- SONAR ----
       - name: Sonar analysis (Maven)
-        working-directory: back
         run: |
           mvn -B clean verify sonar:sonar \
             -Dsonar.projectKey=projet-10 \
