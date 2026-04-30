@@ -33,17 +33,15 @@ jobs:
         working-directory: front
         run: npm run test -- --watch=false --browsers=ChromeHeadlessCI --code-coverage
 
-      - name: Verify coverage file exists
-        run: |
-          test -f front/coverage/lcov.info
-          grep -q "SF:" front/coverage/lcov.info
+      # ---- BACK ----
+      - name: Build, test & coverage backend
+        working-directory: back
+        run: mvn clean verify
 
-      # ---- SONAR ----
       - name: Sonar analysis (Maven)
         working-directory: back
-        run: |
-          mvn -B clean verify sonar:sonar \
-            -Dsonar.projectKey=projet-10 \
-            -Dsonar.organization=openclassrooms-java-angular \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: mvn sonar:sonar \
+          -Dsonar.projectKey=projet-10 \
+          -Dsonar.organization=openclassrooms-java-angular \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
