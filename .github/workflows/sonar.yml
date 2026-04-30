@@ -45,6 +45,13 @@ jobs:
         working-directory: front
         run: npm run test -- --watch=false --browsers=ChromeHeadlessCI --code-coverage
 
+      - name: Debug coverage output
+        run: |
+          echo "=== FRONT COVERAGE ==="
+          find . -name lcov.info
+          ls -R front/coverage || true
+          ls -R coverage || true
+
       # ======================
       # SONAR
       # ======================
