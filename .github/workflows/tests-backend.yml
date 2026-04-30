@@ -1,6 +1,7 @@
 name: tests-backend
 
 on:
+  workflow_dispatch: # permet de déclencher manuellement le workflow
   pull_request:
     branches:
       - main       # déclenche l'action lorsqu’une pull request cible la branche main

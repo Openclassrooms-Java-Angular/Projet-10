@@ -14,7 +14,7 @@ COPY angular.json .
 COPY tsconfig.json .
 
 # build Angular
-RUN npm run build
+RUN npx ng build
 
 # utiliser une image officielle de nginx
 FROM nginx:alpine

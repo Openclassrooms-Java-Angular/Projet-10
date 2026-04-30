@@ -1,6 +1,7 @@
 name: deploy-dockerhub
 
 on:
+  workflow_dispatch: # permet de déclencher manuellement le workflow
   workflow_run:
     workflows: ["sonar"]
     types:

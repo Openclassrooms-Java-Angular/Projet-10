@@ -1,6 +1,7 @@
 name: sonar
 
 on:
+  workflow_dispatch: # permet de déclencher manuellement le workflow
   workflow_run:
     workflows: ["tests-backend", "tests-frontend"]
     types:
