@@ -26,7 +26,7 @@ module.exports = function (config) {
       suppressAll: true // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/bobapp'),
+      dir: require('path').join(__dirname, './coverage'),
       subdir: '.',
       reporters: [
         { type: 'html' },
@@ -38,7 +38,7 @@ module.exports = function (config) {
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
-    autoWatch: true,
+    autoWatch: false,
     customLaunchers: {
       ChromeHeadlessCI: {
         base: 'ChromeHeadless',
@@ -46,7 +46,7 @@ module.exports = function (config) {
       }
     },
     browsers: ['ChromeHeadlessCI'],
-    singleRun: false,
+    singleRun: true,
     restartOnFileChange: true,
     junitReporter: {
       outputDir: 'coverage/junit',

@@ -35,7 +35,7 @@ jobs:
 
       - name: Verify coverage file exists
         run: |
-          test -f ../front/coverage/lcov.info
+          test -f front/coverage/lcov.info
           grep -q "SF:" front/coverage/lcov.info
 
       # ---- SONAR ----
