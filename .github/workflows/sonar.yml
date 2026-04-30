@@ -40,6 +40,7 @@ jobs:
 
       # ---- SONAR ----
       - name: Sonar analysis (Maven)
+        working-directory: back
         run: |
           mvn -B clean verify sonar:sonar \
             -Dsonar.projectKey=projet-10 \
