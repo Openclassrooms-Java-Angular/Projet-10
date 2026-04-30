@@ -6,7 +6,7 @@ WORKDIR /usr/local/app
 
 # copier les fichiers package.json et package-lock.json et télécharger les dépendances avec mise en cache
 COPY package*.json ./
-RUN npm ci
+RUN npm ci --include=dev
 
 # copier les sources du projet et construire l'application
 COPY src ./src
