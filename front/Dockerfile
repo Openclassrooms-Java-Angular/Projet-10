@@ -12,6 +12,7 @@ RUN npm ci --include=dev
 COPY src ./src
 COPY angular.json .
 COPY tsconfig.json .
+COPY tsconfig.app.json .
 
 # build Angular
 RUN npx ng build
