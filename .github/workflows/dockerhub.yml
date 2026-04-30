@@ -21,6 +21,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Active Docker Buildx pour permettre l'utilisation du cache GitHub Actions
+      # et optimiser les performances des builds Docker (multi-stage + cache layers)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       # =========================
       # BACKEND IMAGE
       # =========================
