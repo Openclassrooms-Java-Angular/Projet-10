@@ -8,8 +8,9 @@ on:
       - completed
 
 jobs:
-  sonar:
-    name: SonarCloud Analysis
+  sonar-back:
+    name: SonarCloud Backend
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
 
     steps:
@@ -31,9 +32,30 @@ jobs:
         working-directory: back
         run: mvn clean verify
 
-      # ======================
-      # FRONTEND
-      # ======================
+      - name: Debug backend coverage
+        run: |
+          echo "=== BACK COVERAGE ==="
+          find back -name "jacoco.xml"
+          ls -R back/target/site || true
+
+      - name: SonarCloud Scan Backend
+        uses: sonarsource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: back
+
+  sonar-front:
+    name: SonarCloud Frontend
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -47,17 +69,15 @@ jobs:
         working-directory: front
         run: npm run test -- --watch=false --browsers=ChromeHeadlessCI --code-coverage
 
-      - name: Debug coverage output
+      - name: Debug frontend coverage
         run: |
           echo "=== FRONT COVERAGE ==="
-          find front -name "lcov.info" -o -name "jacoco.xml"
+          find front -name "lcov.info"
           ls -R front/coverage || true
-          ls -R back/target/site || true
 
-      # ======================
-      # SONAR
-      # ======================
-      - name: SonarCloud Scan
+      - name: SonarCloud Scan Frontend
         uses: sonarsource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: front
